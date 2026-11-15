@@ -1,0 +1,17 @@
+{
+  "name": "Pelvic Floor Protocol",
+  "short_name": "Pelvic Floor",
+  "description": "A 12-week, 10-minute-a-day pelvic floor program with a guided timer and progress log.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F2F5F6",
+  "theme_color": "#0C6B70",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

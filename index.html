@@ -1,0 +1,760 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Pelvic Floor Protocol</title>
+<meta name="description" content="A 12-week, 10-minute-a-day pelvic floor program with a guided timer and progress log.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0C6B70">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Pelvic Floor">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: clinical protocol sheet. A guided-session console up top, then the 12-week program, technique library, arousal-control module and safety notes. */
+:root{
+  --bg:#F2F5F6; --surface:#FFFFFF; --sunk:#E8EEF0; --ink:#13232A; --muted:#566A72; --line:#D5DFE2;
+  --accent:#0C6B70; --accent-ink:#FFFFFF; --accent-soft:#D9EEEE;
+  --breath:#5161C9; --breath-soft:#E3E6F8; --stretch:#9A6A12; --stretch-soft:#F4EAD6;
+  --done:#0C6B70; --miss:#C9D3D6; --warn:#A33A2C; --warn-soft:#F7E3DF;
+  --f-display:"Sora","Segoe UI",system-ui,sans-serif;
+  --f-body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"Cascadia Mono",Consolas,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0C1417; --surface:#131E22; --sunk:#0F191C; --ink:#E4EDEF; --muted:#94A7AE; --line:#24363C;
+  --accent:#4DB4B6; --accent-ink:#06191B; --accent-soft:#143236;
+  --breath:#8E9BF0; --breath-soft:#1D2244; --stretch:#E0AE55; --stretch-soft:#33280F;
+  --done:#4DB4B6; --miss:#2A3B41; --warn:#F08A78; --warn-soft:#3A1E19; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0C1417; --surface:#131E22; --sunk:#0F191C; --ink:#E4EDEF; --muted:#94A7AE; --line:#24363C;
+  --accent:#4DB4B6; --accent-ink:#06191B; --accent-soft:#143236;
+  --breath:#8E9BF0; --breath-soft:#1D2244; --stretch:#E0AE55; --stretch-soft:#33280F;
+  --done:#4DB4B6; --miss:#2A3B41; --warn:#F08A78; --warn-soft:#3A1E19; color-scheme:dark}
+
+*{box-sizing:border-box}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+[hidden]{display:none!important}
+img{max-width:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1120px;margin:0 auto;padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:56px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.2;letter-spacing:-.01em}
+h1{font-size:clamp(28px,4.6vw,42px);font-weight:700}
+h2{font-size:clamp(22px,3vw,28px);font-weight:600}
+h3{font-size:18px;font-weight:600}
+p{margin:0}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lede{color:var(--muted);max-width:62ch}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+section{display:flex;flex-direction:column;gap:20px}
+.sec-head{display:flex;flex-direction:column;gap:8px}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Header */
+header.top{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:28px;align-items:end}
+header.top .intro{display:flex;flex-direction:column;gap:12px}
+.status{display:grid;grid-template-columns:minmax(0,.75fr) minmax(0,1.4fr) minmax(0,1fr);border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.status>div{padding:14px 16px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.status>div+div{border-left:1px solid var(--line)}
+.status .v{font-family:var(--f-display);font-size:clamp(17px,2.1vw,24px);overflow-wrap:anywhere;font-weight:600;font-variant-numeric:tabular-nums}
+.status .k{font-size:13px;color:var(--muted)}
+
+/* Player */
+.console{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.console .left{padding:24px;display:flex;flex-direction:column;gap:18px;border-right:1px solid var(--line);min-width:0}
+.console .right{padding:24px;display:flex;flex-direction:column;gap:16px;align-items:center;justify-content:center;background:var(--sunk);min-width:0}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tab{border:1px solid var(--line);background:transparent;border-radius:999px;padding:6px 13px;font-size:14px;font-weight:600;color:var(--muted)}
+.tab[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.tab .today-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:currentColor;margin-left:6px;vertical-align:middle}
+.sess-meta{display:flex;flex-direction:column;gap:4px}
+.sess-meta .pos{font-size:14px;color:var(--muted)}
+.blocks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.blocks li{display:grid;grid-template-columns:20px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 2px;border-bottom:1px solid var(--line);font-size:15px}
+.blocks li button{all:unset;cursor:pointer;display:contents}
+.blocks .dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--line);justify-self:center}
+.blocks li.past .dot{background:var(--accent);border-color:var(--accent)}
+.blocks li.cur{font-weight:700}
+.blocks li.cur .dot{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.blocks .dur{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+
+.stage{position:relative;width:min(300px,78vw);aspect-ratio:1;max-width:100%}
+.stage svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+.stage .track{fill:none;stroke:var(--line);stroke-width:6}
+.stage .prog{fill:none;stroke:var(--accent);stroke-width:6;stroke-linecap:round;transition:stroke .3s}
+.disc{position:absolute;inset:16%;border-radius:50%;background:var(--accent-soft);border:2px solid var(--accent);transition-property:transform,background-color,border-color;transition-timing-function:cubic-bezier(.45,0,.25,1);display:flex}
+.readout{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;padding:24%}
+.readout .mode{font-family:var(--f-display);font-weight:600;font-size:clamp(17px,2.4vw,21px);line-height:1.15}
+.readout .count{font-family:var(--f-mono);font-weight:700;font-size:clamp(40px,7vw,56px);line-height:1;font-variant-numeric:tabular-nums}
+.readout .rep{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.stage[data-m="inhale"] .disc,.stage[data-m="exhale"] .disc{background:var(--breath-soft);border-color:var(--breath)}
+.stage[data-m="inhale"] .prog,.stage[data-m="exhale"] .prog{stroke:var(--breath)}
+.stage[data-m="stretch"] .disc{background:var(--stretch-soft);border-color:var(--stretch)}
+.stage[data-m="stretch"] .prog{stroke:var(--stretch)}
+.stage[data-m="relax"] .disc,.stage[data-m="rest"] .disc,.stage[data-m="prep"] .disc{background:var(--surface);border-color:var(--line)}
+.cue{max-width:46ch;text-align:center;display:flex;flex-direction:column;gap:6px;min-height:6.5em}
+.cue .bt{font-family:var(--f-display);font-weight:600}
+.cue .how{color:var(--muted);font-size:15.5px}
+.controls{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:9px 14px;font-weight:600;font-size:15px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);min-width:132px}
+.btn:disabled{opacity:.45;cursor:default}
+.timebar{width:100%;max-width:360px;display:flex;flex-direction:column;gap:6px}
+.timebar .bar{height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.timebar .bar i{display:block;height:100%;width:0;background:var(--accent)}
+.timebar .t{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.donebanner{border:1px solid var(--accent);background:var(--accent-soft);border-radius:8px;padding:10px 14px;font-weight:600;font-size:15px;text-align:center}
+
+/* Progress */
+.prog-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:24px;align-items:start}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.cal{display:flex;flex-direction:column;gap:5px}
+.cal-row{display:grid;grid-template-columns:44px repeat(7,minmax(0,1fr));gap:5px;align-items:center}
+.cal-row .wk{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.cal-row .wk b{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.cell{aspect-ratio:1;max-height:40px;border-radius:6px;border:1px solid var(--line);background:transparent;font-family:var(--f-mono);font-size:11px;color:var(--muted);display:flex;align-items:center;justify-content:center;padding:0;position:relative}
+.cell.done{background:var(--done);border-color:var(--done);color:var(--accent-ink)}
+.cell.miss{background:var(--miss);border-color:var(--miss)}
+.cell.today{outline:2px solid var(--accent);outline-offset:1px}
+.cell.future{opacity:.55;cursor:default}
+.cell.rec::after{content:"";position:absolute;top:3px;right:3px;width:4px;height:4px;border-radius:50%;background:var(--breath)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:12px;height:12px;border-radius:3px;border:1px solid var(--line);display:inline-block}
+.row-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;color:var(--muted)}
+.row-actions input[type=date]{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:5px 8px}
+.checkins{width:100%;border-collapse:collapse;font-size:14px}
+.checkins th{text-align:left;font-weight:600;color:var(--muted);font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:6px 6px;border-bottom:1px solid var(--line)}
+.checkins td{padding:6px;border-bottom:1px solid var(--line)}
+.checkins select{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:3px 6px;max-width:100%}
+.scale{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:2px}
+.sync{font-size:13px;color:var(--muted)}
+
+/* Program */
+.phases{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.phase{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.phase .wk{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;color:var(--accent);text-transform:uppercase}
+.phase .goal{font-size:15px;color:var(--muted)}
+.rx{width:100%;border-collapse:collapse;font-size:14.5px}
+.rx td{padding:6px 0;border-top:1px solid var(--line);vertical-align:top}
+.rx td:last-child{text-align:right;font-family:var(--f-mono);font-size:12.5px;color:var(--muted);white-space:nowrap;padding-left:8px}
+.week-shape{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;font-size:13px;text-align:center}
+.week-shape div{border:1px solid var(--line);border-radius:6px;padding:8px 4px;background:var(--surface)}
+.week-shape div.r{background:var(--breath-soft);border-color:var(--breath-soft)}
+.week-shape b{display:block;font-family:var(--f-mono);font-size:11px;color:var(--muted);font-weight:500}
+
+/* Anatomy + library */
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.card{border-top:2px solid var(--ink);padding-top:12px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.card p{font-size:15.5px;color:var(--muted)}
+.card .role{font-family:var(--f-mono);font-size:12px;color:var(--accent);letter-spacing:.04em;text-transform:uppercase}
+.find{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px}
+.steps{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:8px}
+.mistakes{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.mistakes li{padding-left:22px;position:relative}
+.mistakes li::before{content:"×";position:absolute;left:0;top:-1px;font-weight:700;color:var(--warn)}
+.lib{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 32px}
+.ex{padding:16px 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:6px;min-width:0}
+.ex .tag{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:4px;align-self:flex-start}
+.tag.s{background:var(--accent-soft);color:var(--accent)}
+.tag.b{background:var(--breath-soft);color:var(--breath)}
+.tag.f{background:var(--stretch-soft);color:var(--stretch)}
+.ex p{font-size:15.5px}
+.ex .cuel{color:var(--muted);font-size:14.5px}
+
+/* Arousal */
+.arousal{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:22px}
+.scale10{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:3px}
+.scale10 div{height:34px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);font-size:13px;font-weight:700}
+.zone-labels{display:grid;grid-template-columns:5fr 2fr 2fr 1fr;gap:3px;font-size:12.5px;color:var(--muted)}
+.zone-labels span{border-top:2px solid var(--line);padding-top:4px}
+.levels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.level{display:flex;flex-direction:column;gap:8px;min-width:0}
+.level .wk{font-family:var(--f-mono);font-size:12px;color:var(--accent);text-transform:uppercase;letter-spacing:.06em}
+.level ol{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:5px;font-size:15.5px}
+.keyidea{border-left:3px solid var(--accent);padding:4px 0 4px 16px;max-width:70ch}
+
+/* Safety */
+.safety{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px}
+.alert{background:var(--warn-soft);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:10px}
+.alert h3{color:var(--warn)}
+.alert ul,.plain ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px;font-size:15.5px}
+.plain{display:flex;flex-direction:column;gap:10px;padding:20px 0}
+.refs{margin:0;padding-left:1.3em;font-size:14px;color:var(--muted);display:flex;flex-direction:column;gap:6px}
+.disclaimer{font-size:14px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px;max-width:80ch}
+
+@media (max-width:860px){
+  header.top,.console,.prog-grid,.phases,.three,.find,.lib,.levels,.safety{grid-template-columns:minmax(0,1fr)}
+  .console .left{border-right:0;border-bottom:1px solid var(--line)}
+  .lib{gap:0}
+}
+@media (max-width:460px){
+  .status .v{font-size:20px}
+  .week-shape{font-size:11px}
+  .cal-row{grid-template-columns:34px repeat(7,minmax(0,1fr));gap:4px}
+  .console .left,.console .right{padding:18px}
+}
+@media (prefers-reduced-motion:reduce){.disc{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header class="top">
+  <div class="intro">
+    <span class="eyebrow">Male pelvic floor rehabilitation · 12 weeks · 10 min/day</span>
+    <h1>Pelvic Floor Protocol</h1>
+    <p class="lede">A progressive daily program to strengthen and release the muscles that keep erections firm, then train the timing and relaxation skills behind ejaculatory control. Every session pairs work with full release, because a strong floor that cannot let go is part of the problem, not the solution.</p>
+  </div>
+  <div class="status" aria-live="polite">
+    <div><span class="v" id="stWeek">1</span><span class="k" id="stWeekK">Week of 12</span></div>
+    <div><span class="v" id="stPhase">Foundation</span><span class="k">Current phase</span></div>
+    <div><span class="v" id="stDone">0</span><span class="k" id="stDoneK">Sessions done</span></div>
+  </div>
+</header>
+
+<!-- Guided session -->
+<section id="session" aria-labelledby="h-session">
+  <div class="console">
+    <div class="left">
+      <div class="sec-head">
+        <span class="eyebrow">Guided session</span>
+        <h2 id="h-session">Today's 10 minutes</h2>
+      </div>
+      <div class="tabs" role="group" aria-label="Choose session" id="tabs"></div>
+      <div class="sess-meta">
+        <h3 id="sessName">Foundation</h3>
+        <span class="pos" id="sessPos"></span>
+      </div>
+      <ol class="blocks" id="blockList"></ol>
+    </div>
+    <div class="right">
+      <div class="stage" id="stage" data-m="prep">
+        <svg viewBox="0 0 100 100" aria-hidden="true"><circle class="track" cx="50" cy="50" r="46"/><circle class="prog" id="ring" cx="50" cy="50" r="46" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/></svg>
+        <div class="disc" id="disc"></div>
+        <div class="readout"><span class="mode" id="rdMode">Ready</span><span class="count" id="rdCount">10:00</span><span class="rep" id="rdRep">&nbsp;</span></div>
+      </div>
+      <div class="cue" aria-live="polite"><span class="bt" id="cueTitle">Press start when you are in position</span><span class="how" id="cueHow">The disc shrinks and lifts when you squeeze, widens when you breathe in or lengthen, and settles when you let go.</span></div>
+      <div class="controls">
+        <button class="btn" id="bPrev" aria-label="Previous exercise">◀ Prev</button>
+        <button class="btn primary" id="bPlay">Start session</button>
+        <button class="btn" id="bNext" aria-label="Next exercise">Next ▶</button>
+        <button class="btn" id="bSound" aria-pressed="true">Tones on</button>
+        <button class="btn" id="bReset">Reset</button>
+      </div>
+      <div class="timebar"><div class="bar"><i id="tbFill"></i></div><div class="t"><span id="tbEl">0:00</span><span id="tbTot">10:00</span></div></div>
+      <div class="donebanner" id="doneBanner" hidden>Session complete. Logged for today.</div>
+    </div>
+  </div>
+</section>
+
+<!-- Progress -->
+<section aria-labelledby="h-prog">
+  <div class="sec-head">
+    <span class="eyebrow">Progress log</span>
+    <h2 id="h-prog">84 days, one square each</h2>
+    <p class="lede">Finishing a guided session fills today's square. Tap any past square to log a session you did without the timer. A blue dot marks the weekly release day.</p>
+  </div>
+  <div class="prog-grid">
+    <div class="panel">
+      <div class="cal" id="cal"></div>
+      <div class="legend"><span><i style="background:var(--done);border-color:var(--done)"></i>Done</span><span><i style="background:var(--miss);border-color:var(--miss)"></i>Missed</span><span><i style="outline:2px solid var(--accent);outline-offset:1px"></i>Today</span></div>
+      <div class="row-actions"><label for="startDate">Program start</label><input type="date" id="startDate"><span id="restartWrap"><button class="btn" id="bRestart" style="padding:5px 10px;font-size:14px">Restart from today</button></span><span id="restartConfirm" hidden>Clear the log and start over? <button class="btn" id="bRestartYes" style="padding:5px 10px;font-size:14px">Yes, restart</button> <button class="btn" id="bRestartNo" style="padding:5px 10px;font-size:14px">Cancel</button></span></div>
+      <div class="row-actions"><button class="btn" id="bExport" style="padding:5px 10px;font-size:14px">Back up log</button><label class="btn" for="importFile" style="padding:5px 10px;font-size:14px">Restore backup</label><input type="file" id="importFile" accept="application/json,.json" hidden></div>
+      <span class="sync" id="sync">Your log is saved on this device only. Back it up before switching phones or clearing browser data.</span>
+    </div>
+    <div class="panel">
+      <h3>Weekly check-in</h3>
+      <p style="font-size:15px;color:var(--muted)">Rate the past week once, on your release day. Trends over 3–4 weeks matter more than any single week.</p>
+      <div style="overflow-x:auto"><table class="checkins"><thead><tr><th>Week</th><th>Hardness</th><th>Control</th></tr></thead><tbody id="ciBody"></tbody></table></div>
+      <div class="scale">
+        <span><b>Hardness 1–4:</b> 1 larger but soft · 2 firm, not enough for penetration · 3 enough for penetration, not fully hard · 4 fully hard and rigid</span>
+        <span><b>Control 0–10:</b> 0 no say over when you finish · 10 you choose the moment every time</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Program -->
+<section aria-labelledby="h-prog2">
+  <div class="sec-head">
+    <span class="eyebrow">The program</span>
+    <h2 id="h-prog2">Three phases, each four weeks</h2>
+    <p class="lede">Load rises by changing position (lying, then sitting, then standing and moving), hold time and speed. Effort for holds is about 70% of maximum. Stay in a phase longer if you cannot complete its holds with full, easy release between them.</p>
+  </div>
+  <div class="phases" id="phases"></div>
+  <div class="sec-head" style="gap:10px">
+    <h3>The shape of every week</h3>
+    <div class="week-shape">
+      <div>Day 1<b>Train</b></div><div>Day 2<b>Train</b></div><div>Day 3<b>Train</b></div><div>Day 4<b>Train</b></div><div>Day 5<b>Train</b></div><div>Day 6<b>Train</b></div><div class="r">Day 7<b>Release</b></div>
+    </div>
+    <p style="font-size:15px;color:var(--muted)">Day 7 is a release session: breathing, lengthening and hip mobility only. Muscles adapt during recovery, and an over-trained pelvic floor tends to stay clenched. After week 12, keep the Control session 3–4 times a week to hold your gains.</p>
+  </div>
+</section>
+
+<!-- Anatomy -->
+<section aria-labelledby="h-anat">
+  <div class="sec-head">
+    <span class="eyebrow">How it works</span>
+    <h2 id="h-anat">The muscles behind the erection valve</h2>
+    <p class="lede">An erection depends on blood flowing in and being trapped. Three pelvic floor muscles help with the trapping and with the ejaculation reflex itself.</p>
+  </div>
+  <div class="three">
+    <div class="card"><span class="role">Rigidity</span><h3>Ischiocavernosus</h3><p>Wraps the roots of the penis. Its contraction squeezes the erectile chambers and pushes pressure inside them above blood pressure, which is what turns a full erection into a rigid one.</p></div>
+    <div class="card"><span class="role">Outflow valve · ejaculation</span><h3>Bulbospongiosus</h3><p>Surrounds the bulb of the penis and presses on the veins that drain it, slowing outflow. Its rhythmic spasms also drive ejaculation, so learning to keep it calm at high arousal is the core of control.</p></div>
+    <div class="card"><span class="role">Support · tone</span><h3>Levator ani</h3><p>The hammock beneath the pelvic organs. It gives the other two a stable base and holds resting tone. When it is chronically tight it can lower the ejaculation threshold and cause pelvic pain.</p></div>
+  </div>
+</section>
+
+<!-- Find + mistakes -->
+<section aria-labelledby="h-find">
+  <div class="sec-head">
+    <span class="eyebrow">Technique</span>
+    <h2 id="h-find">Find the right muscle first</h2>
+  </div>
+  <div class="find">
+    <div class="panel">
+      <h3>Locate it</h3>
+      <ol class="steps">
+        <li>Imagine stopping your urine stream and holding back wind at the same moment. The inward lift you feel at the base of the penis and behind the scrotum is the pelvic floor.</li>
+        <li>Check in front of a mirror: a correct squeeze draws the base of the penis in and lifts the testicles slightly. The penis may nod upward.</li>
+        <li>Place two fingers on the perineum, the area between scrotum and anus. You should feel it firm up and lift away from your fingers, then soften when you let go.</li>
+        <li>Stopping urine mid-stream is only a one-time test to find the muscle. Do not practise on the toilet; it can interfere with normal bladder emptying.</li>
+      </ol>
+    </div>
+    <div class="panel">
+      <h3>Common mistakes</h3>
+      <ul class="mistakes">
+        <li>Holding your breath. Breathe steadily through every hold.</li>
+        <li>Squeezing the buttocks, inner thighs or abdominals instead. Keep them soft; put a hand on your belly to check.</li>
+        <li>Pushing down instead of lifting up during a contraction.</li>
+        <li>Going at 100% on every rep. Holds work best at about 70%; flicks are the only all-out effort.</li>
+        <li>Rushing the release. The relaxation half of each rep is the half that builds control.</li>
+        <li>Adding extra sets. More is not better here; fatigue leaves the floor tense and sore.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Library -->
+<section aria-labelledby="h-lib">
+  <div class="sec-head">
+    <span class="eyebrow">Exercise library</span>
+    <h2 id="h-lib">What each exercise does</h2>
+  </div>
+  <div class="lib" id="lib"></div>
+</section>
+
+<!-- Arousal -->
+<section aria-labelledby="h-ar">
+  <div class="sec-head">
+    <span class="eyebrow">Ejaculatory control module · from week 3 · 2–3× per week · 15–20 min</span>
+    <h2 id="h-ar">Arousal training</h2>
+    <p class="lede">Pelvic strength gives you the hardware. Control is a skill learned under real arousal, so it is practised separately, during solo stimulation, outside the daily 10 minutes. It is based on the start-stop method (Semans, 1956), still a first-line behavioural treatment.</p>
+  </div>
+  <div class="arousal">
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <h3>Rate your arousal on a 0–10 scale</h3>
+      <div class="scale10" id="scale10"></div>
+      <div class="zone-labels"><span>1–5 · building</span><span>6–7 · work zone</span><span>8–9 · plateau</span><span>10</span></div>
+      <p style="font-size:15px;color:var(--muted)">10 is ejaculation. Just before it sits the point of no return: once the reflex fires, nothing stops it. All the training happens in the 6–8 range, well before that point.</p>
+    </div>
+    <p class="keyidea"><b>The key idea:</b> at high arousal, relax the pelvic floor and lengthen your exhale. Most men clench and hold their breath, and that tension feeds the ejaculation reflex. The reverse Kegel and slow breathing from your daily sessions are the tools you use here.</p>
+    <div class="levels">
+      <div class="level"><span class="wk">Weeks 3–6 · Level 1</span><h3>Start–stop</h3><ol><li>Stimulate yourself to 6–7.</li><li>Stop completely. Exhale slowly, soften the jaw, belly and pelvic floor.</li><li>Wait until arousal drops to 3–4, then resume.</li><li>Complete 3–4 cycles before allowing yourself to finish.</li></ol></div>
+      <div class="level"><span class="wk">Weeks 7–9 · Level 2</span><h3>Slow down, don't stop</h3><ol><li>Approach 7 as before.</li><li>Reduce speed and pressure instead of stopping.</li><li>Breathe out through 7–8 and release the floor; let arousal settle by a point or two.</li><li>Aim for 15 minutes in the 6–8 range.</li></ol></div>
+      <div class="level"><span class="wk">Weeks 10–12 · Level 3</span><h3>Ride the plateau</h3><ol><li>Hold arousal at 7–8 with breath and relaxation alone, without changing stimulation.</li><li>If you near 9, use one firm 5–8 second squeeze, then a full release and long exhale.</li><li>Carry the same skills into partnered sex, starting with slower positions and an agreed pause signal.</li></ol></div>
+    </div>
+  </div>
+</section>
+
+<!-- Safety -->
+<section aria-labelledby="h-safe">
+  <div class="sec-head">
+    <span class="eyebrow">Safety</span>
+    <h2 id="h-safe">See a doctor first if any of these apply</h2>
+  </div>
+  <div class="safety">
+    <div class="alert">
+      <h3>Get checked before starting</h3>
+      <ul>
+        <li>Erection problems that are new or getting worse. They can be the first sign of heart disease, diabetes or low testosterone, often years before other symptoms. Ask for blood pressure, glucose, lipids and testosterone.</li>
+        <li>Pain in the pelvis, perineum, testicles or penis, or pain on ejaculation.</li>
+        <li>Blood in urine or semen, or new difficulty passing urine.</li>
+        <li>Recent prostate surgery or pelvic radiotherapy. Work with a pelvic floor physiotherapist.</li>
+        <li>A new bend or lump in the penis.</li>
+      </ul>
+      <h3 style="margin-top:6px">Stop and get assessed if</h3>
+      <ul>
+        <li>The exercises cause pain, or symptoms get worse after 2–3 weeks. That pattern suggests an overactive floor; switch to release-day sessions only until you are assessed.</li>
+      </ul>
+    </div>
+    <div class="plain">
+      <h3>What multiplies the results</h3>
+      <ul>
+        <li><b>Aerobic exercise:</b> about 150 minutes a week of brisk walking, cycling or running improves erectile function on its own.</li>
+        <li><b>Sleep:</b> 7–9 hours. Testosterone and night-time erections both depend on it.</li>
+        <li><b>No smoking, moderate alcohol,</b> and a healthy waistline. Each affects blood vessels directly.</li>
+        <li><b>Stress and performance anxiety</b> are major drivers of both early ejaculation and erection loss. The breathing work helps; a sex therapist helps more if anxiety dominates.</li>
+        <li><b>Medication:</b> this program combines safely with prescribed treatments such as PDE5 inhibitors. Do not stop a prescription without your doctor.</li>
+        <li><b>One physiotherapy visit</b> with biofeedback is the fastest way to confirm you are contracting the right muscle.</li>
+      </ul>
+      <h3 style="margin-top:8px">What to expect</h3>
+      <p style="font-size:15.5px">Most men notice easier contractions in 2–3 weeks. Firmer erections and better control usually appear between weeks 6 and 12. In a randomised trial of pelvic floor training for erectile dysfunction, 40% of men regained normal function and a further 35% improved. In a 12-week rehabilitation study for lifelong premature ejaculation, 61% gained control of the ejaculatory reflex.</p>
+    </div>
+  </div>
+  <div class="sec-head" style="gap:10px">
+    <h3>References</h3>
+    <ol class="refs">
+      <li>Dorey G, Speakman M, Feneley R, et al. Randomised controlled trial of pelvic floor muscle exercises and manometric biofeedback for erectile dysfunction. <i>Br J Gen Pract.</i> 2004;54(508):819–825.</li>
+      <li>Pastore AL, Palleschi G, Fuschi A, et al. Pelvic floor muscle rehabilitation for patients with lifelong premature ejaculation: a novel therapeutic approach. <i>Ther Adv Urol.</i> 2014;6(3):83–88.</li>
+      <li>Cohen D, Gonzalez J, Goldstein I. The role of pelvic floor muscles in male sexual dysfunction and pelvic pain. <i>Sex Med Rev.</i> 2016;4(1):53–62.</li>
+      <li>Semans JH. Premature ejaculation: a new approach. <i>South Med J.</i> 1956;49(4):353–358.</li>
+      <li>Gerbild H, Larsen CM, Graugaard C, Areskoug Josefsson K. Physical activity to improve erectile function: a systematic review of intervention studies. <i>Sex Med.</i> 2018;6(2):75–89.</li>
+    </ol>
+  </div>
+  <p class="disclaimer">This program is educational and does not replace a medical assessment. Erection and ejaculation problems have many causes, some of them treatable medical conditions. If you are unsure whether it is right for you, show it to a urologist or a pelvic floor physiotherapist.</p>
+</section>
+
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ---------- Session definitions ---------- */
+function I(m,d,l,lvl){return {m:m,d:d,l:l||null,lvl:lvl==null?1:lvl};}
+function R(n,arr){var out=[];for(var i=0;i<n;i++){arr.forEach(function(x){var c=Object.assign({},x);if(c.rep==null&&c.m!=="rest"){c.rep=i+1;c.of=n;}out.push(c);});}return out;}
+var ELEV=[I("contract",3,"Floor 1 · 25%",.25),I("contract",3,"Floor 2 · 50%",.5),I("contract",3,"Floor 3 · 75%",.75),I("contract",3,"Floor 4 · 100%",1),I("relax",3,"Down to 50%",.5),I("relax",5,"Ground floor · let go")];
+var BREATH=function(n){return R(n,[I("inhale",4),I("exhale",6)]);};
+
+var SESS={
+ p1:{key:"p1",name:"Foundation",tab:"Foundation",weeks:"Weeks 1–4",pos:"Lying on your back, knees bent, feet flat",goal:"Find the muscles, learn a clean contraction and a complete release.",blocks:[
+  {t:"Settle in",how:"Lie on your back, knees bent, feet flat. One hand on your belly. Let the jaw, shoulders and buttocks go soft.",items:[I("prep",15,"Get in position")]},
+  {t:"Diaphragmatic breathing",how:"In through the nose: belly rises, pelvic floor widens and drops. Long breath out: let it return on its own.",items:BREATH(12)},
+  {t:"Slow holds",how:"Draw the base of the penis in and lift the testicles. About 70% effort, keep breathing. Then let go fully and feel the drop.",items:R(10,[I("contract",5),I("relax",10)])},
+  {t:"Quick flicks",how:"Fast, strong squeeze, then instant release. Quality over speed: each flick must fully let go.",items:R(10,[I("contract",1,"Flick"),I("relax",1,"Off")]).concat([I("rest",15)],R(10,[I("contract",1,"Flick"),I("relax",1,"Off")]))},
+  {t:"Reverse Kegel",how:"On a slow breath in, gently let the pelvic floor bulge outward and lengthen, as if starting to pass urine. No straining.",items:R(8,[I("lengthen",5),I("rest",5)])},
+  {t:"Happy baby stretch",how:"Hold the outsides of your feet, knees wide toward your armpits. Breathe into the pelvic floor.",items:[I("stretch",60)]},
+  {t:"Child's pose",how:"Knees wide, hips back to heels, arms forward. Each breath in widens the floor; each breath out softens it.",items:[I("stretch",60)]},
+  {t:"Close",how:"Lie still. The area should feel warm and loose, not clenched. That relaxed baseline is the goal.",items:[I("rest",0,"Body scan")],fill:true}
+ ]},
+ p2:{key:"p2",name:"Strength",tab:"Strength",weeks:"Weeks 5–8",pos:"Seated upright on a firm chair, then standing",goal:"Longer holds, faster flicks, and contractions under body weight.",blocks:[
+  {t:"Settle in",how:"Sit tall on a firm chair, feet flat, weight on the sit bones. Relax the buttocks and thighs.",items:[I("prep",10,"Get in position")]},
+  {t:"Diaphragmatic breathing",how:"In through the nose, belly and pelvic floor widen. Long breath out, everything softens.",items:BREATH(8)},
+  {t:"Long holds",how:"Squeeze and lift at about 70%. Hold steady for the full 10 seconds while breathing normally. Release completely.",items:R(8,[I("contract",10),I("relax",10)])},
+  {t:"Quick flicks",how:"Stand up. Fast, strong squeeze and instant release. Keep the buttocks soft.",items:R(15,[I("contract",1,"Flick"),I("relax",1,"Off")]).concat([I("rest",10)],R(15,[I("contract",1,"Flick"),I("relax",1,"Off")]))},
+  {t:"Elevator",how:"Lift in four steps from light to full, then lower in two steps. This builds fine control over how hard you squeeze.",items:R(3,ELEV)},
+  {t:"Glute bridge with lift",how:"Lie on your back, knees bent. Squeeze the pelvic floor first, then lift the hips. Hold, lower, release.",items:R(8,[I("contract",5,"Lift + bridge"),I("relax",3,"Lower + release")])},
+  {t:"Reverse Kegel",how:"On a slow breath in, let the pelvic floor bulge outward and lengthen. No straining.",items:R(6,[I("lengthen",5),I("rest",5)])},
+  {t:"Kneeling hip-flexor stretch",how:"Half-kneel, tuck the pelvis and shift forward until the front of the back hip stretches. Switch sides halfway.",items:[I("stretch",25,"Left side"),I("stretch",25,"Right side")]},
+  {t:"Close",how:"Stand or sit quietly. Notice the floor at rest, neither lifted nor pushed.",items:[I("rest",0,"Body scan")],fill:true}
+ ]},
+ p3:{key:"p3",name:"Control",tab:"Control",weeks:"Weeks 9–12",pos:"Standing and moving",goal:"Endurance, fast on/off switching and contractions during movement.",blocks:[
+  {t:"Settle in",how:"Stand with feet hip-width, knees soft. Let the belly and buttocks hang loose.",items:[I("prep",10,"Get in position")]},
+  {t:"Diaphragmatic breathing",how:"Standing. In through the nose, floor drops. Out slowly, floor softens.",items:BREATH(5)},
+  {t:"Endurance holds",how:"Squeeze and lift at about 70% and hold for 12 seconds with normal breathing. Release completely.",items:R(5,[I("contract",12),I("relax",8)])},
+  {t:"Sustained light hold",how:"Hold a gentle 30% lift for 20 seconds while breathing and relaxing everything else. This trains steady background tone.",items:R(2,[I("contract",20,"Light 30% hold",.3),I("relax",10)])},
+  {t:"Power flicks",how:"Fast, maximal squeeze and instant full release.",items:R(15,[I("contract",1,"Flick"),I("relax",1,"Off")]).concat([I("rest",10)],R(15,[I("contract",1,"Flick"),I("relax",1,"Off")]))},
+  {t:"On/off control drill",how:"Full squeeze, then switch it off completely and fast. Speed of release is the skill you will use under arousal.",items:R(8,[I("contract",3,"On"),I("relax",3,"Off · fully")])},
+  {t:"Elevator",how:"Four steps up, two steps down, with smooth transitions.",items:R(2,ELEV)},
+  {t:"Squat with lift",how:"Lift the pelvic floor as you lower into a squat, keep it lifted at the bottom, release as you stand.",items:R(8,[I("contract",4,"Lift + squat down"),I("relax",4,"Stand + release")])},
+  {t:"Reverse Kegel",how:"On a slow breath in, let the pelvic floor lengthen and bulge outward.",items:R(5,[I("lengthen",5),I("rest",5)])},
+  {t:"Deep squat hold",how:"Sink into a deep squat, heels down if you can (hold a door frame). Breathe into the pelvic floor.",items:[I("stretch",30)]},
+  {t:"Close",how:"Stand quietly. The floor rests easy. Control means you choose when it works.",items:[I("rest",0,"Body scan")],fill:true}
+ ]},
+ rec:{key:"rec",name:"Release day",tab:"Release day",weeks:"Day 7 of every week",pos:"Lying, kneeling and squatting",goal:"Down-train tension and restore flexibility.",blocks:[
+  {t:"Settle in",how:"Lie on your back, knees bent. Nothing to achieve today: this session is about letting go.",items:[I("prep",10,"Get in position")]},
+  {t:"Diaphragmatic breathing",how:"In for 4: belly, ribs and pelvic floor widen. Out for 6: let everything soften.",items:BREATH(15)},
+  {t:"Reverse Kegel",how:"On a slow breath in, let the pelvic floor bulge outward and lengthen. Rest on the breath out.",items:R(10,[I("lengthen",5),I("rest",5)])},
+  {t:"Happy baby stretch",how:"Hold the outsides of your feet, knees wide. Rock gently side to side if it helps.",items:[I("stretch",60)]},
+  {t:"Child's pose",how:"Knees wide, hips to heels, arms forward. Breathe into your lower back and pelvic floor.",items:[I("stretch",60)]},
+  {t:"Deep squat hold",how:"Sink into a deep squat with support. Let the pelvic floor hang heavy.",items:[I("stretch",45)]},
+  {t:"Kneeling hip-flexor stretch",how:"Half-kneel, tuck the pelvis, shift forward. Switch sides halfway.",items:[I("stretch",30,"Left side"),I("stretch",30,"Right side")]},
+  {t:"Figure-4 glute stretch",how:"On your back, cross one ankle over the opposite knee and pull the thigh toward you. Switch sides halfway.",items:[I("stretch",30,"Left side"),I("stretch",30,"Right side")]},
+  {t:"Close",how:"Lie still and notice the difference from when you started.",items:[I("rest",0,"Body scan")],fill:true}
+ ]}
+};
+var TARGET=600, GAP=4;
+Object.keys(SESS).forEach(function(k){
+  var s=SESS[k], tot=0;
+  s.blocks.forEach(function(b,bi){ if(bi>0&&b.items[0].m!=="prep"){ b.items.unshift(I("prep",GAP,"Next: "+b.t)); } b.items.forEach(function(x){tot+=x.d;}); });
+  var last=s.blocks[s.blocks.length-1]; var fillItem=last.items[last.items.length-1];
+  fillItem.d=Math.max(15,TARGET-tot); tot+=fillItem.d;
+  s.total=tot;
+  s.flat=[]; s.blocks.forEach(function(b,bi){ b.start=s.flat.length; b.dur=0; b.items.forEach(function(x){ var c=Object.assign({b:bi},x); s.flat.push(c); b.dur+=x.d; }); });
+});
+
+/* ---------- Helpers ---------- */
+function $(id){return document.getElementById(id);}
+function pad(n){return String(n).padStart(2,"0");}
+function ymd(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());}
+function parse(s){var p=s.split("-").map(Number);return new Date(p[0],p[1]-1,p[2]);}
+function addDays(s,n){var d=parse(s);d.setDate(d.getDate()+n);return ymd(d);}
+function diffDays(a,b){return Math.round((parse(b)-parse(a))/86400000);}
+function fmt(sec){sec=Math.max(0,Math.round(sec));return Math.floor(sec/60)+":"+pad(sec%60);}
+function todayStr(){return ymd(new Date());}
+
+/* ---------- State + storage ---------- */
+var LKEY="pfp-state-v1";
+function fresh(){return {start:todayStr(),done:{},checkins:{}};}
+function normalize(d){d=d||{};return {start:typeof d.start==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(d.start)?d.start:todayStr(),done:d.done&&typeof d.done==="object"?Object.assign({},d.done):{},checkins:d.checkins&&typeof d.checkins==="object"?JSON.parse(JSON.stringify(d.checkins)):{}};}
+var state=fresh();
+try{var raw=localStorage.getItem(LKEY);if(raw)state=normalize(JSON.parse(raw));}catch(e){}
+function saveLocal(){try{localStorage.setItem(LKEY,JSON.stringify(state));}catch(e){}}
+function save(){saveLocal();}
+function setSync(t){$("sync").textContent=t;}
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(function(){});}catch(e){}
+
+$("bExport").addEventListener("click",function(){
+  var blob=new Blob([JSON.stringify({app:"pelvic-floor-protocol",version:1,exported:new Date().toISOString(),state:state},null,2)],{type:"application/json"});
+  var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="pelvic-floor-log-"+todayStr()+".json";
+  document.body.appendChild(a); a.click(); setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},1000);
+  setSync("Backup saved as "+a.download+".");
+});
+$("importFile").addEventListener("change",function(){
+  var f=this.files&&this.files[0], input=this; if(!f)return;
+  var r=new FileReader();
+  r.onload=function(){
+    try{var d=JSON.parse(r.result); if(!d||!d.state||typeof d.state.start!=="string")throw 0;
+      state=normalize(d.state); save(); renderAll(); setSync("Backup restored: "+Object.keys(state.done).length+" sessions.");}
+    catch(e){setSync("That file is not a Pelvic Floor Protocol backup. Choose a file made with Back up log.");}
+    input.value="";
+  };
+  r.readAsText(f);
+});
+
+/* ---------- Program position ---------- */
+function position(){
+  var day=diffDays(state.start,todayStr());
+  if(day<0)day=0;
+  var week=Math.floor(day/7)+1, dow=day%7;
+  var phase=week<=4?"p1":week<=8?"p2":"p3";
+  return {day:day,week:week,dow:dow,phase:phase,rec:dow===6,post:week>12};
+}
+function todaySessKey(){var p=position();return p.rec?"rec":p.phase;}
+
+/* ---------- Header ---------- */
+function renderStatus(){
+  var p=position();
+  $("stWeek").textContent=p.post?"12+":p.week;
+  $("stWeekK").textContent=p.post?"Maintenance":"Week of 12";
+  $("stPhase").textContent=p.post?"Maintain":SESS[p.phase].name;
+  var n=Object.keys(state.done).filter(function(k){return state.done[k];}).length;
+  $("stDone").textContent=n;
+  $("stDoneK").textContent="of 84 sessions";
+}
+
+/* ---------- Player ---------- */
+var cur=SESS[todaySessKey()], idx=0, left=0, running=false, last=0, raf=0, finished=false, sound=true, actx=null, wake=null;
+var MODE={prep:"Get ready",contract:"Squeeze & lift",relax:"Let go fully",inhale:"Breathe in · widen",exhale:"Breathe out · soften",lengthen:"Lengthen · let it bulge",stretch:"Hold the stretch",rest:"Rest"};
+
+function renderTabs(){
+  var tk=todaySessKey(), el=$("tabs"); el.innerHTML="";
+  ["p1","p2","p3","rec"].forEach(function(k){
+    var b=document.createElement("button"); b.className="tab"; b.type="button"; b.id="tab-"+k;
+    b.setAttribute("aria-pressed",String(cur.key===k)); b.textContent=SESS[k].tab;
+    if(k===tk){var d=document.createElement("span");d.className="today-dot";d.title="Today's session";b.appendChild(d);b.setAttribute("aria-label",SESS[k].tab+" (today)");}
+    b.addEventListener("click",function(){ if(cur.key===k)return; stop(); cur=SESS[k]; load(0); renderTabs(); });
+    el.appendChild(b);
+  });
+}
+function renderBlocks(){
+  $("sessName").textContent=cur.name+" · "+cur.weeks;
+  $("sessPos").textContent=cur.pos+" · "+fmt(cur.total)+" total";
+  var ol=$("blockList"); ol.innerHTML="";
+  var cb=cur.flat[idx]?cur.flat[idx].b:-1;
+  cur.blocks.forEach(function(b,bi){
+    var li=document.createElement("li"); if(bi<cb||finished)li.className="past"; if(bi===cb&&!finished)li.className="cur";
+    var btn=document.createElement("button"); btn.type="button"; btn.setAttribute("aria-label","Jump to "+b.t);
+    btn.innerHTML='<span class="dot"></span><span></span><span class="dur"></span>';
+    btn.children[1].textContent=b.t; btn.children[2].textContent=fmt(b.dur);
+    btn.addEventListener("click",function(){ var was=running; finished=false; $("doneBanner").hidden=true; load(b.start); if(was)play(); });
+    li.appendChild(btn); ol.appendChild(li);
+  });
+}
+function elapsedAt(i,remain){var e=0;for(var k=0;k<i;k++)e+=cur.flat[k].d;return e+(cur.flat[i]?cur.flat[i].d-remain:0);}
+function discStyle(it){
+  var disc=$("disc"), s=1, y=0;
+  if(it.m==="contract"){s=1-.32*it.lvl;y=-10*it.lvl;}
+  else if(it.m==="inhale"){s=1.12;}
+  else if(it.m==="lengthen"){s=1.14;y=5;}
+  else if(it.m==="relax"&&it.lvl<1){s=1-.32*it.lvl;y=-10*it.lvl;}
+  var dur=Math.min(it.d,it.m==="contract"&&it.d<=1?0.25:it.m==="relax"&&it.d<=1?0.25:1.2);
+  if(it.m==="inhale"||it.m==="exhale")dur=it.d*.9;
+  disc.style.transitionDuration=dur+"s";
+  disc.style.transform="translateY("+y+"%) scale("+s+")";
+}
+function show(){
+  var it=cur.flat[idx], b=cur.blocks[it.b];
+  $("stage").setAttribute("data-m",it.m);
+  $("rdMode").textContent=it.l||MODE[it.m];
+  $("rdRep").textContent=it.rep?(it.rep+" / "+it.of):" ";
+  $("cueTitle").textContent=b.t; $("cueHow").textContent=b.how;
+  discStyle(it); tick();
+}
+function tick(){
+  var it=cur.flat[idx];
+  $("rdCount").textContent=it.d>=60?fmt(left):String(Math.ceil(left-1e-6));
+  $("ring").setAttribute("stroke-dashoffset",String(100*(left/it.d)));
+  var el=elapsedAt(idx,left);
+  $("tbEl").textContent=fmt(el); $("tbTot").textContent=fmt(cur.total);
+  $("tbFill").style.width=(100*el/cur.total).toFixed(2)+"%";
+}
+function load(i){
+  idx=Math.max(0,Math.min(cur.flat.length-1,i)); left=cur.flat[idx].d;
+  renderBlocks(); show();
+  $("bPlay").textContent=running?"Pause":(idx===0&&!finished?"Start session":"Resume");
+}
+function beep(m){
+  if(!sound||!actx)return;
+  var f={contract:880,relax:440,inhale:520,exhale:390,lengthen:330,stretch:600,rest:440,prep:660}[m]||500;
+  try{var o=actx.createOscillator(),g=actx.createGain();o.frequency.value=f;o.type="sine";g.gain.setValueAtTime(0.0001,actx.currentTime);g.gain.exponentialRampToValueAtTime(0.18,actx.currentTime+0.02);g.gain.exponentialRampToValueAtTime(0.0001,actx.currentTime+0.22);o.connect(g);g.connect(actx.destination);o.start();o.stop(actx.currentTime+0.25);}catch(e){}
+}
+function frame(now){
+  if(!running)return;
+  var dt=(now-last)/1000; last=now; left-=dt;
+  while(left<=0){
+    if(idx>=cur.flat.length-1){complete();return;}
+    var prevB=cur.flat[idx].b; idx++; left+=cur.flat[idx].d;
+    if(cur.flat[idx].b!==prevB)renderBlocks();
+    show(); beep(cur.flat[idx].m);
+  }
+  tick(); raf=requestAnimationFrame(frame);
+}
+function play(){
+  if(finished){finished=false;$("doneBanner").hidden=true;load(0);}
+  if(!actx){try{actx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}
+  if(actx&&actx.state==="suspended")actx.resume().catch(function(){});
+  running=true; last=performance.now(); $("bPlay").textContent="Pause";
+  beep(cur.flat[idx].m);
+  try{if(navigator.wakeLock)navigator.wakeLock.request("screen").then(function(w){wake=w;}).catch(function(){});}catch(e){}
+  raf=requestAnimationFrame(frame);
+}
+function stop(){
+  running=false; cancelAnimationFrame(raf);
+  if(wake){wake.release().catch(function(){});wake=null;}
+  $("bPlay").textContent=finished?"Start again":(idx===0&&left===cur.flat[0].d?"Start session":"Resume");
+}
+function complete(){
+  finished=true; left=0; stop(); tick(); renderBlocks();
+  $("rdMode").textContent="Complete"; $("rdCount").textContent="✓"; $("rdRep").textContent=fmt(cur.total);
+  $("stage").setAttribute("data-m","relax"); $("disc").style.transform="none";
+  $("cueTitle").textContent="Well done"; $("cueHow").textContent="Stay relaxed for a moment before you get up.";
+  state.done[todayStr()]=cur.key; save(); renderAll();
+  $("doneBanner").hidden=false; beep("contract");
+}
+$("bPlay").addEventListener("click",function(){running?stop():play();});
+$("bNext").addEventListener("click",function(){var b=cur.flat[idx].b;if(b<cur.blocks.length-1){finished=false;$("doneBanner").hidden=true;load(cur.blocks[b+1].start);if(running)last=performance.now();}});
+$("bPrev").addEventListener("click",function(){var it=cur.flat[idx],b=it.b;var st=cur.blocks[b].start;var target=(idx-st>2||b===0)?st:cur.blocks[b-1].start;finished=false;$("doneBanner").hidden=true;load(target);if(running)last=performance.now();});
+$("bReset").addEventListener("click",function(){finished=false;$("doneBanner").hidden=true;stop();load(0);$("bPlay").textContent="Start session";});
+$("bSound").addEventListener("click",function(){sound=!sound;this.setAttribute("aria-pressed",String(sound));this.textContent=sound?"Tones on":"Tones off";});
+document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible"&&running){last=performance.now();try{if(navigator.wakeLock&&!wake)navigator.wakeLock.request("screen").then(function(w){wake=w;}).catch(function(){});}catch(e){}}});
+
+/* ---------- Calendar + check-ins ---------- */
+var PHC={p1:"var(--accent)",p2:"var(--breath)",p3:"var(--stretch)"};
+function renderCal(){
+  var el=$("cal"), t=todayStr(); el.innerHTML="";
+  for(var w=0;w<12;w++){
+    var row=document.createElement("div"); row.className="cal-row";
+    var lab=document.createElement("span"); lab.className="wk"; var ph=w<4?"p1":w<8?"p2":"p3";
+    lab.innerHTML='<b style="background:'+PHC[ph]+'"></b>W'+(w+1); row.appendChild(lab);
+    for(var d=0;d<7;d++){
+      (function(ds,isRec){
+        var c=document.createElement("button"); c.type="button"; c.className="cell"; c.id="c-"+ds;
+        var dd=parse(ds); c.textContent=dd.getDate();
+        var rel=diffDays(t,ds), done=!!state.done[ds];
+        if(done)c.classList.add("done"); else if(rel<0)c.classList.add("miss");
+        if(rel===0)c.classList.add("today"); if(rel>0){c.classList.add("future");c.disabled=true;}
+        if(isRec)c.classList.add("rec");
+        c.setAttribute("aria-label",dd.toDateString()+(isRec?", release day":"")+(done?", done":rel<0?", not logged":""));
+        c.setAttribute("aria-pressed",String(done));
+        if(rel<=0)c.addEventListener("click",function(){ if(state.done[ds])delete state.done[ds]; else state.done[ds]="manual"; save(); renderAll(); });
+        row.appendChild(c);
+      })(addDays(state.start,w*7+d),d===6);
+    }
+    el.appendChild(row);
+  }
+  $("startDate").value=state.start;
+}
+function renderCheckins(){
+  var p=position(), n=Math.min(12,p.week), tb=$("ciBody"); tb.innerHTML="";
+  for(var w=1;w<=n;w++){
+    (function(w){
+      var tr=document.createElement("tr"), ci=state.checkins[w]||{};
+      var td0=document.createElement("td"); td0.className="mono"; td0.textContent="W"+w; tr.appendChild(td0);
+      [["h",["–","1","2","3","4"]],["c",["–","0","1","2","3","4","5","6","7","8","9","10"]]].forEach(function(f){
+        var td=document.createElement("td"), s=document.createElement("select"); s.id="ci-"+f[0]+"-"+w;
+        s.setAttribute("aria-label",(f[0]==="h"?"Hardness":"Control")+" week "+w);
+        f[1].forEach(function(v){var o=document.createElement("option");o.value=v==="–"?"":v;o.textContent=v;s.appendChild(o);});
+        s.value=ci[f[0]]!=null?String(ci[f[0]]):"";
+        s.addEventListener("change",function(){var c=Object.assign({},state.checkins[w]||{});if(s.value==="")delete c[f[0]];else c[f[0]]=Number(s.value);state.checkins[w]=c;save();});
+        td.appendChild(s); tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    })(w);
+  }
+}
+$("startDate").addEventListener("change",function(){var v=this.value;if(/^\d{4}-\d{2}-\d{2}$/.test(v)&&diffDays(v,todayStr())>=0){state.start=v;save();renderAll();}else{this.value=state.start;}});
+$("bRestart").addEventListener("click",function(){$("restartWrap").hidden=true;$("restartConfirm").hidden=false;});
+$("bRestartNo").addEventListener("click",function(){$("restartWrap").hidden=false;$("restartConfirm").hidden=true;});
+$("bRestartYes").addEventListener("click",function(){state=fresh();save();$("restartWrap").hidden=false;$("restartConfirm").hidden=true;renderAll();});
+
+function renderAll(){
+  renderStatus(); renderCal(); renderCheckins();
+  var tk=todaySessKey();
+  if(!running&&!finished&&idx===0&&cur.key!==tk){cur=SESS[tk];load(0);}
+  renderTabs();
+}
+
+/* ---------- Static content ---------- */
+(function(){
+  var ph=$("phases");
+  ["p1","p2","p3"].forEach(function(k){
+    var s=SESS[k], d=document.createElement("div"); d.className="phase";
+    var rows=s.blocks.filter(function(b){return b.t!=="Settle in"&&b.t!=="Close";}).map(function(b){
+      var reps=b.items.filter(function(x){return x.m!=="prep";}), r=reps.find(function(x){return x.rep;});
+      var c=reps.filter(function(x){return x.m==="contract";}), rx;
+      if(b.t==="Elevator")rx=r.of+" × 4 floors";
+      else if(b.t==="Quick flicks"||b.t==="Power flicks")rx="2 × "+r.of;
+      else if(c.length&&r)rx=r.of+" × "+c[0].d+"s"+(c[0].lvl<1?" @30%":"");
+      else if(reps[0].m==="lengthen")rx=r.of+" × "+reps[0].d+"s";
+      else if(reps[0].m==="inhale")rx=r.of+" breaths";
+      else rx=fmt(reps.reduce(function(a,x){return a+x.d;},0));
+      return "<tr><td>"+b.t+"</td><td>"+rx+"</td></tr>";
+    }).join("");
+    d.innerHTML='<span class="wk">'+s.weeks+'</span><h3>'+s.name+'</h3><p class="goal">'+s.goal+' <br>Position: '+s.pos.toLowerCase()+'.</p><table class="rx"><tbody>'+rows+'</tbody></table>';
+    ph.appendChild(d);
+  });
+  var LIB=[
+    ["s","Strength","Slow and long holds","Builds the strength and endurance that keep pressure inside the erectile chambers high.","Lift and draw in at 70%, hold while breathing, then let go for at least as long as you held."],
+    ["s","Power","Quick flicks","Trains the fast fibres that fire at peak arousal and during ejaculation.","As fast and strong as you can, then instantly off. Stop the set if releases get sloppy."],
+    ["s","Control","Elevator","Teaches you to grade effort instead of having only on and off.","Four even steps up, two steps down. Smooth transitions matter more than the top floor."],
+    ["s","Control","On/off control drill","Builds the fast, complete release you use at high arousal.","Full squeeze for 3 seconds, then switch it off and check that nothing is still gripping."],
+    ["s","Endurance","Sustained light hold","Trains steady low-level tone, the kind that supports an erection over time.","Barely 30%. If the buttocks or belly join in, it is too hard."],
+    ["s","Function","Bridge and squat with lift","Teaches the floor to work while the rest of the body moves, as it must during sex.","Lift the floor first, then move. Release as you return."],
+    ["b","Release","Diaphragmatic breathing","Each breath in moves the pelvic floor down; each breath out lets it return. It is the floor's built-in stretch.","Belly, not chest. Breath out about 1.5 times longer than breath in."],
+    ["b","Release","Reverse Kegel","Actively lengthens the pelvic floor. The main tool against tightness, pain and early ejaculation.","Gentle outward bulge, as if starting to urinate. Never strain or hold your breath."],
+    ["f","Mobility","Happy baby and child's pose","Open the pelvic outlet and stretch the floor passively.","Breathe into the space between the sit bones. Hold without forcing."],
+    ["f","Mobility","Deep squat, hip-flexor and figure-4 stretches","Tight hips and glutes pull on the pelvis and keep the floor guarded.","Hold for slow breaths. Mild stretch, never pain."]
+  ];
+  $("lib").innerHTML=LIB.map(function(e){return '<div class="ex"><span class="tag '+e[0]+'">'+e[1]+'</span><h3>'+e[2]+'</h3><p>'+e[3]+'</p><p class="cuel"><b>Cue:</b> '+e[4]+'</p></div>';}).join("");
+  var sc=$("scale10"); for(var i=1;i<=10;i++){var d=document.createElement("div");var a=i<=5?.10+i*.05:i<=7?.55:i<=9?.8:1;d.style.background="color-mix(in srgb, var(--accent) "+Math.round(a*100)+"%, var(--surface))";d.style.color=a>.5?"var(--accent-ink)":"var(--ink)";d.textContent=i;sc.appendChild(d);}
+})();
+
+/* ---------- Boot ---------- */
+load(0); renderAll();
+setInterval(function(){ if(!running) { var t=todayStr(); if(t!==renderAll._d){renderAll._d=t;renderAll();} } },60000); renderAll._d=todayStr();
+if("serviceWorker" in navigator&&location.protocol==="https:"){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){});});}
+})();
+</script>
+</body>
+</html>
